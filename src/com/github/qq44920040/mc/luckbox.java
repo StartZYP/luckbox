@@ -26,6 +26,7 @@ public class luckbox extends JavaPlugin  implements Listener {
     public String AchieveAwardMsg;
     public String luckboxpoolMag;
     private int MaxChance;
+    private String AllMsg;
     @Override
     public void onEnable() {
         if (!getDataFolder().exists()) {
@@ -52,7 +53,7 @@ public class luckbox extends JavaPlugin  implements Listener {
                     if (luck==null){
                         getConfig().set("PlayerData." + sender.getName(),0);
                     }else {
-                        sender.sendMessage("§c§l玩家:"+sender.getName()+"幸运值:"+luck);
+                        sender.sendMessage("§b玩家：§a"+sender.getName()+"的幸运值为§e"+luck);
                     }
                 }
             }else if (args.length==2){
@@ -61,7 +62,7 @@ public class luckbox extends JavaPlugin  implements Listener {
                     if (luck==null){
                         getConfig().set("PlayerData." + args[1],0);
                     }else {
-                        sender.sendMessage("§c§l玩家:"+args[1]+"幸运值:"+luck);
+                        sender.sendMessage("§b玩家：§a"+args[1]+"的幸运值为§e"+luck);
                     }
                 }
             }else if (args.length==3){
@@ -97,7 +98,7 @@ public class luckbox extends JavaPlugin  implements Listener {
                             }
                         }
                         if (a==36){
-                            player.sendMessage("§d§l背包已满,不适合开启宝箱");
+                            player.sendMessage("§c背包已满，无法进行此操作");
                             return;
                         }
                         ItemStack item = player.getInventory().getItem(0);
@@ -129,7 +130,8 @@ public class luckbox extends JavaPlugin  implements Listener {
                             int i = random.nextInt(AchieveAwardPool.size());
                             ItemStack itemStack = AchieveAwardPool.get(i);
                             player.getInventory().addItem(itemStack);
-                            player.sendMessage(AchieveAwardMsg.replace("{name}",itemStack.getItemMeta().getDisplayName()).split("\\|"));
+                            player.sendMessage(AchieveAwardMsg.replace("{name}",itemStack.getItemMeta().getDisplayName()).replace("{player}",player.getName()).split("\\|"));
+                            Bukkit.getServer().getConsoleSender().sendMessage(AllMsg.replace("{name}",itemStack.getItemMeta().getDisplayName()).replace("{player}",player.getName()));
                             player.updateInventory();
                         }else {
                             Random random = new Random();
@@ -140,7 +142,8 @@ public class luckbox extends JavaPlugin  implements Listener {
                                 if (i<=nowchance){
                                     getConfig().set("PlayerData."+player.getName(),luckvalue+luckboxpool.getLuck());
                                     player.getInventory().addItem(luckboxpool.getItem());
-                                    player.sendMessage(luckboxpoolMag.replace("{name}",luckboxpool.getItem().getItemMeta().getDisplayName()).split("\\|"));
+                                    player.sendMessage(luckboxpoolMag.replace("{name}",luckboxpool.getItem().getItemMeta().getDisplayName()).replace("{player}",player.getName()).split("\\|"));
+                                    Bukkit.getServer().getConsoleSender().sendMessage(AllMsg.replace("{name}",luckboxpool.getItem().getItemMeta().getDisplayName()).replace("{player}",player.getName()));
                                     player.updateInventory();
                                     return;
                                 }
@@ -191,6 +194,7 @@ public class luckbox extends JavaPlugin  implements Listener {
         Keyhavename = getConfig().getString("BoxAndKey.Key");
         luckboxpoolMag =getConfig().getString("luckboxpoolMag");
         AchieveAwardMsg = getConfig().getString("AchieveAwardMsg");
+        AllMsg = getConfig().getString("AllMsg");
         for (luckboxpool luckboxpool:boxpoll){
             MaxChance += luckboxpool.getChance();
         }

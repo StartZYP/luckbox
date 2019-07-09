@@ -34,7 +34,8 @@ LuckValueMax: 1200
 BoxAndKey:
   Box: "宝箱"
   Key: "钥匙"
-AchieveAwardMsg: "§e恭喜你|§e§l中了必中奖池的物品{name}|§d下次再接再厉哦"
-luckboxpoolMag: "这是那个奖池的哦哦哦|§e§l你中奖了哦|呵呵"
+AchieveAwardMsg: "§e恭喜你|§e§l中了必中{player}奖池的物品{name}|§d下次再接再厉哦"
+luckboxpoolMag: "这是那个奖池{player}的哦哦哦|§e§l你中奖了哦|呵呵"
+AllMsg: "gasdasd{name}给顺丰到付{player}"
 PlayerData:
   skyman: 1200
