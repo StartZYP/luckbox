@@ -1,0 +1,40 @@
+luckboxpool:
+  a1:
+    chance: 10
+    luck: 50
+    items:
+      id: 267
+      name: "§e§l这个是好东西"
+  a2:
+    chance: 30
+    luck: 50
+    items:
+      id: 6
+      name: "§e§l这个是好东西"
+  a3:
+    chance: 20
+    luck: -50
+    items:
+      id: 7
+      name: "§e§l这个是好东西"
+  a4:
+    chance: 20
+    luck: 50
+    items:
+      id: 5
+      name: "§e§l这个是好东西"
+AchieveAwardPool:
+  item1:
+    id: 264
+    name: "§e§l必然中的奖池物品1"
+  item2:
+    id: 222
+    name: "§e§l必然中的奖池物品2"
+LuckValueMax: 1200
+BoxAndKey:
+  Box: "宝箱"
+  Key: "钥匙"
+AchieveAwardMsg: "§e恭喜你|§e§l中了必中奖池的物品{name}|§d下次再接再厉哦"
+luckboxpoolMag: "这是那个奖池的哦哦哦|§e§l你中奖了哦|呵呵"
+PlayerData:
+  skyman: 1200
