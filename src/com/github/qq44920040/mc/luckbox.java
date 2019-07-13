@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.*;
@@ -27,6 +28,7 @@ public class luckbox extends JavaPlugin  implements Listener {
     public String luckboxpoolMag;
     private int MaxChance;
     private String AllMsg;
+    private List<String> coods = new ArrayList<>();
     @Override
     public void onEnable() {
         if (!getDataFolder().exists()) {
@@ -38,6 +40,14 @@ public class luckbox extends JavaPlugin  implements Listener {
         }
         Bukkit.getServer().getPluginManager().registerEvents(this,this);
         ReloadConfig();
+        int Second = getConfig().getInt("Second");
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                //System.out.println("clear");
+                coods.clear();
+            }
+        }.runTaskTimer(this,20L*Second,20*Second);
         super.onEnable();
     }
 
@@ -46,12 +56,16 @@ public class luckbox extends JavaPlugin  implements Listener {
         if(label.equalsIgnoreCase("box")){
             if (args.length==1){
                 if (args[0].equalsIgnoreCase("reload")&&sender.isOp()){
+                    boxpoll.clear();
+                    AchieveAwardPool.clear();
                     ReloadConfig();
                     sender.sendMessage("§e§l重载插件成功");
                 }else if (args[0].equalsIgnoreCase("luckinfo")){
                     String luck = getConfig().getString("PlayerData." + sender.getName());
                     if (luck==null){
                         getConfig().set("PlayerData." + sender.getName(),0);
+                        sender.sendMessage("§b玩家：§a"+sender.getName()+"的幸运值为§e0");
+                        saveConfig();
                     }else {
                         sender.sendMessage("§b玩家：§a"+sender.getName()+"的幸运值为§e"+luck);
                     }
@@ -61,6 +75,7 @@ public class luckbox extends JavaPlugin  implements Listener {
                     String luck = getConfig().getString("PlayerData." + args[1]);
                     if (luck==null){
                         getConfig().set("PlayerData." + args[1],0);
+                        saveConfig();
                     }else {
                         sender.sendMessage("§b玩家：§a"+args[1]+"的幸运值为§e"+luck);
                     }
@@ -70,6 +85,7 @@ public class luckbox extends JavaPlugin  implements Listener {
                     int luck = getConfig().getInt("PlayerData." + args[1]);
                     int addvalue = Integer.parseInt(args[2]);
                     getConfig().set("PlayerData." + args[1],luck+addvalue);
+                    saveConfig();
                     sender.sendMessage("§d§l添加幸运值成功");
                 }
             }
@@ -87,10 +103,13 @@ public class luckbox extends JavaPlugin  implements Listener {
                 if (itemInHand.hasItemMeta()){
                     ItemMeta itemMeta = itemInHand.getItemMeta();
                     String displayName = itemMeta.getDisplayName();
-                    System.out.println("进入了");
-                    System.out.println(displayName+Boxhavename);
+                    //System.out.println("进入了");
+                    //System.out.println(displayName+Boxhavename);
                     if (displayName.contains(Boxhavename)){
-                        System.out.println("验证宝箱");
+                        if (coods.contains(player.getName())){
+                            player.sendMessage("§b当前无法进行此操作，请等待"+getConfig().getInt("Second")+"秒");
+                            return;
+                        }
                         int a =0;
                         for (ItemStack itemStack:player.getInventory().getContents()){
                             if (itemStack!=null&&itemStack.getType()!=Material.AIR){
@@ -103,11 +122,11 @@ public class luckbox extends JavaPlugin  implements Listener {
                         }
                         ItemStack item = player.getInventory().getItem(0);
                         if (item==null){
-                            player.sendMessage("§d§l物品栏一号位请放置钥匙");
+                            player.sendMessage("§a请在物品栏的§c第一号栏位§a放上钥匙，堆叠数必须为1");
                             return;
                         }
                         if (!item.getItemMeta().getDisplayName().contains(Keyhavename)){
-                            player.sendMessage("§d§l物品栏一号位请放置钥匙");
+                            player.sendMessage("§a请在物品栏的§c第一号栏位§a放上钥匙，堆叠数必须为1");
                             return;
                         }
                         int stacknumkey = item.getAmount();
@@ -115,35 +134,52 @@ public class luckbox extends JavaPlugin  implements Listener {
                         if (stacknumbox==1){
                             player.getInventory().setItem(0,null);
                         }else {
-                            item.setAmount(stacknumbox-1);
+                            player.sendMessage("§a请在物品栏的§c第一号栏位§a放上钥匙，堆叠数必须为1");
+                            return;
                         }
                         if (stacknumkey==1){
                             player.setItemInHand(null);
                         }else {
-                            itemInHand.setAmount(stacknumkey-1);
+                            player.sendMessage("§a请在物品栏的§c第一号栏位§a放上钥匙，堆叠数必须为1");
+                            return;
                         }
-                        player.updateInventory();
                         int luckvalue = getConfig().getInt("PlayerData." + player.getName());
+                        coods.add(player.getName());
                         if (luckvalue>=LuckValueMax){
                             getConfig().set("PlayerData."+player.getName(),luckvalue-LuckValueMax);
+                            saveConfig();
                             Random random = new Random();
                             int i = random.nextInt(AchieveAwardPool.size());
                             ItemStack itemStack = AchieveAwardPool.get(i);
+                            ItemMeta itemMeta1 = itemStack.getItemMeta();
+                            String[] zhouyupengs = itemMeta1.getDisplayName().split("zhouyupeng");
+                            itemMeta1.setDisplayName(zhouyupengs[0]);
+                            itemStack.setItemMeta(itemMeta1);
                             player.getInventory().addItem(itemStack);
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),zhouyupengs[1].replace("{player}",player.getName()));
                             player.sendMessage(AchieveAwardMsg.replace("{name}",itemStack.getItemMeta().getDisplayName()).replace("{player}",player.getName()).split("\\|"));
-                            Bukkit.getServer().getConsoleSender().sendMessage(AllMsg.replace("{name}",itemStack.getItemMeta().getDisplayName()).replace("{player}",player.getName()));
+                            String tempmsg = AllMsg.replace("{name}",itemStack.getItemMeta().getDisplayName()).replace("{player}",player.getName());
+                            for (Player p:Bukkit.getServer().getOnlinePlayers()){
+                                p.sendMessage(tempmsg);
+                            }
                             player.updateInventory();
                         }else {
                             Random random = new Random();
+                            //System.out.println(MaxChance);
                             int i = random.nextInt(MaxChance);
                             int nowchance =0;
                             for (luckboxpool luckboxpool:boxpoll){
                                 nowchance += luckboxpool.getChance();
                                 if (i<=nowchance){
                                     getConfig().set("PlayerData."+player.getName(),luckvalue+luckboxpool.getLuck());
+                                    saveConfig();
                                     player.getInventory().addItem(luckboxpool.getItem());
                                     player.sendMessage(luckboxpoolMag.replace("{name}",luckboxpool.getItem().getItemMeta().getDisplayName()).replace("{player}",player.getName()).split("\\|"));
-                                    Bukkit.getServer().getConsoleSender().sendMessage(AllMsg.replace("{name}",luckboxpool.getItem().getItemMeta().getDisplayName()).replace("{player}",player.getName()));
+                                    String tempmsg = AllMsg.replace("{name}",luckboxpool.getItem().getItemMeta().getDisplayName()).replace("{player}",player.getName());
+                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),luckboxpool.getCmd().replace("{player}",player.getName()));
+                                    for (Player p:Bukkit.getServer().getOnlinePlayers()){
+                                        p.sendMessage(tempmsg);
+                                    }
                                     player.updateInventory();
                                     return;
                                 }
@@ -164,11 +200,14 @@ public class luckbox extends JavaPlugin  implements Listener {
         for (String temp:mines){
             int id = getConfig().getInt("AchieveAwardPool."+temp+".id");
             String name = getConfig().getString("AchieveAwardPool."+temp+".name");
+            List<String> templore = getConfig().getStringList("AchieveAwardPool."+temp+".lore");
+            String cmd = getConfig().getString("AchieveAwardPool."+temp+".cmd");
             //System.out.println(id+name);
             ItemStack itemStack = new ItemStack(Material.APPLE,id);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(name);
+            itemMeta.setDisplayName(name+"zhouyupeng"+cmd);
             itemStack.setTypeId(id);
+            itemMeta.setLore(templore);
             itemStack.setItemMeta(itemMeta);
             itemStack.setAmount(1);
             AchieveAwardPool.add(itemStack);
@@ -180,14 +219,17 @@ public class luckbox extends JavaPlugin  implements Listener {
             int luck = getConfig().getInt("luckboxpool."+temp+".luck");
             int id = getConfig().getInt("luckboxpool."+temp+".items.id");
             String name = getConfig().getString("luckboxpool."+temp+".items.name");
+            List<String> templore = getConfig().getStringList("luckboxpool."+temp+".items.lore");
+            String cmd = getConfig().getString("luckboxpool."+temp+".cmd");
             //System.out.println(chance+luck+id+name);
             ItemStack itemStack = new ItemStack(Material.APPLE,id);
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.setDisplayName(name);
             itemStack.setTypeId(id);
+            itemMeta.setLore(templore);
             itemStack.setItemMeta(itemMeta);
             itemStack.setAmount(1);
-            boxpoll.add(new luckboxpool(temp,chance,luck,itemStack));
+            boxpoll.add(new luckboxpool(temp,chance,luck,itemStack,cmd));
         }
         LuckValueMax = getConfig().getInt("LuckValueMax");
         Boxhavename = getConfig().getString("BoxAndKey.Box");

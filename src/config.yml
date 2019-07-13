@@ -2,34 +2,58 @@ luckboxpool:
   a1:
     chance: 10
     luck: 50
+    cmd: "spawn {player}"
     items:
       id: 267
       name: "§e§l这个是好东西"
+      lore:
+        - "gege"
+        - "sdadas"
   a2:
     chance: 30
     luck: 50
+    cmd: "spawn {player}"
     items:
       id: 6
       name: "§e§l这个是好东西"
+      lore:
+        - "gege"
+        - "sdadas"
   a3:
     chance: 20
     luck: -50
+    cmd: "spawn {player}"
     items:
       id: 7
       name: "§e§l这个是好东西"
+      lore:
+        - "gege"
+        - "sdadas"
   a4:
     chance: 20
     luck: 50
+    cmd: "spawn {player}"
     items:
       id: 5
       name: "§e§l这个是好东西"
+      lore:
+        - "gege"
+        - "sdadas"
 AchieveAwardPool:
   item1:
     id: 264
     name: "§e§l必然中的奖池物品1"
+    cmd: "spawn {player}"
+    lore:
+      - "gege"
+      - "sdadas"
   item2:
     id: 222
     name: "§e§l必然中的奖池物品2"
+    cmd: "spawn {player}"
+    lore:
+      - "gege"
+      - "sdadas"
 LuckValueMax: 1200
 BoxAndKey:
   Box: "宝箱"
@@ -37,5 +61,6 @@ BoxAndKey:
 AchieveAwardMsg: "§e恭喜你|§e§l中了必中{player}奖池的物品{name}|§d下次再接再厉哦"
 luckboxpoolMag: "这是那个奖池{player}的哦哦哦|§e§l你中奖了哦|呵呵"
 AllMsg: "gasdasd{name}给顺丰到付{player}"
+Second: 10
 PlayerData:
   skyman: 1200

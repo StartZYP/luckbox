@@ -7,12 +7,17 @@ public class luckboxpool {
     private int chance;
     private int luck;
     private ItemStack item;
+    private String cmd;
 
-    public luckboxpool(String poolid, int chance, int luck, ItemStack item) {
-        this.poolid = poolid;
-        this.chance = chance;
-        this.luck = luck;
-        this.item = item;
+    @Override
+    public String toString() {
+        return "luckboxpool{" +
+                "poolid='" + poolid + '\'' +
+                ", chance=" + chance +
+                ", luck=" + luck +
+                ", item=" + item +
+                ", cmd='" + cmd + '\'' +
+                '}';
     }
 
     public String getPoolid() {
@@ -47,13 +52,19 @@ public class luckboxpool {
         this.item = item;
     }
 
-    @Override
-    public String toString() {
-        return "luckboxpool{" +
-                "poolid='" + poolid + '\'' +
-                ", chance=" + chance +
-                ", luck=" + luck +
-                ", item=" + item +
-                '}';
+    public String getCmd() {
+        return cmd;
+    }
+
+    public void setCmd(String cmd) {
+        this.cmd = cmd;
+    }
+
+    public luckboxpool(String poolid, int chance, int luck, ItemStack item, String cmd) {
+        this.poolid = poolid;
+        this.chance = chance;
+        this.luck = luck;
+        this.item = item;
+        this.cmd = cmd;
     }
 }
