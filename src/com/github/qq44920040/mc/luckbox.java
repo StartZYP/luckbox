@@ -103,7 +103,7 @@ public class luckbox extends JavaPlugin  implements Listener {
                 if (itemInHand.hasItemMeta()){
                     ItemMeta itemMeta = itemInHand.getItemMeta();
                     String displayName = itemMeta.getDisplayName();
-                    if (displayName!=null){
+                    if (displayName==null){
                         return;
                     }
                     //System.out.println("进入了");
