@@ -134,18 +134,14 @@ public class luckbox extends JavaPlugin  implements Listener {
                         }
                         int stacknumkey = item.getAmount();
                         int stacknumbox = itemInHand.getAmount();
-                        if (stacknumbox==1){
+                        if (stacknumbox==1&&stacknumkey==1){
                             player.getInventory().setItem(0,null);
-                        }else {
-                            player.sendMessage("§a请在物品栏的§c第一号栏位§a放上钥匙，堆叠数必须为1");
-                            return;
-                        }
-                        if (stacknumkey==1){
                             player.setItemInHand(null);
                         }else {
                             player.sendMessage("§a请在物品栏的§c第一号栏位§a放上钥匙，堆叠数必须为1");
                             return;
                         }
+
                         int luckvalue = getConfig().getInt("PlayerData." + player.getName());
                         coods.add(player.getName());
                         if (luckvalue>=LuckValueMax){
